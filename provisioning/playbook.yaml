@@ -1,0 +1,10 @@
+- name: Provision VM with Docker, Docker Compose, Node Exporter, Prometheus, and Grafana
+  hosts: all
+  become: true
+  vars_files:
+    - vars/docker_versions.yaml
+    - vars/node_exporter.yaml
+  roles:
+    - geerlingguy.docker
+    - geerlingguy.node_exporter
+    - grafana-prometheus-node-exporter

@@ -1,0 +1,53 @@
+---
+# tasks file for grafana-prometheus-node-exporter
+- name: Create directory for Prometheus and Grafana
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: vagrant
+  loop:
+    - "{{ files_dir }}/docker-services"
+    - "{{ files_dir }}/grafana/provisioning/datasources"
+    - "{{ files_dir }}/grafana/provisioning/dashboards"
+    - "{{ files_dir }}/prometheus"
+
+- name: Create docker-compose.yaml file
+  ansible.builtin.template:
+    src: docker-compose.yaml.j2
+    dest: "{{ files_dir }}/docker-services/docker-compose.yaml"
+    owner: vagrant
+
+- name: Create prometheus.yaml file
+  template:
+    src: prometheus.yaml.j2
+    dest: "{{ files_dir }}/prometheus/prometheus.yaml"
+    owner: vagrant
+
+- name: Copy grafana directory
+  ansible.posix.synchronize:
+    src: grafana
+    dest: "{{ files_dir }}"
+
+- name: Create datasource_prometheus.yaml file
+  ansible.builtin.template:
+    src: datasource_prometheus.yaml.j2
+    dest: "{{ files_dir }}/grafana/provisioning/datasources/datasource_prometheus.yaml"
+    owner: vagrant
+
+- name: Create dashboards.yaml file
+  ansible.builtin.template:
+    src: dashboards.yaml.j2
+    dest: "{{ files_dir }}/grafana/provisioning/dashboards/dashboards.yaml"
+    owner: vagrant
+
+
+- name: Install docker-py
+  pip:
+    name:
+      - docker
+      - docker-compose
+
+- name: Start docker-compose
+  community.docker.docker_compose:
+    project_src: "{{ files_dir }}/docker-services"
+    state: present

@@ -1,0 +1,5 @@
+---
+# defaults file for grafana-prometheus-node-exporter
+files_dir: "/tmp"
+docker_gate_addr: "172.18.0.1"
+prometheus_service_name: "prometheus"

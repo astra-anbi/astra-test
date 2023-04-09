@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  {{ prometheus_service_name }}:
+    image: prom/prometheus:v2.31.1
+    ports:
+      - 9090:9090
+    volumes:
+      - "{{ files_dir }}/prometheus:/etc/prometheus/"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yaml"
+
+  grafana:
+    image: grafana/grafana:8.4.0
+    ports:
+      - 3000:3000
+    volumes:
+      - "{{ files_dir }}/grafana/provisioning:/etc/grafana/provisioning"
+      - "{{ files_dir }}/grafana/dashboards:/tmp/dashboards"
